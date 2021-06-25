@@ -1,4 +1,5 @@
 import pygame
+import pygame.constants
 import sys
 from pygame.locals import *
 
@@ -8,13 +9,41 @@ clock = pygame.time.Clock()
 #initialize the game
 pygame.init()
 
-WINDOW_SIZE = (400,400)
+WINDOW_SIZE = (840,400)
+CAMERA_SIZE = (WINDOW_SIZE[0]/2,WINDOW_SIZE[1]/2)
 
 #create display
 screen = pygame.display.set_mode(WINDOW_SIZE)
 
+#scale the game
+display = pygame.Surface(CAMERA_SIZE)
+
 #set the player sprite
-playerSprite = pygame.image.load("res/dude-export.png")
+playerSprite = pygame.image.load("res/ScooterTheJumpingDude.png")
+
+#dirt tile
+dirtSprite = pygame.image.load("res/StoneAndDirt.png")
+
+#grass tile
+dirtGrassSprite = pygame.image.load('res/StoneDirtAndGrass.png')
+
+#gameMap[y][x]
+
+gameMap = [['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','2','2','2','2','2','0','0','0','0','0','0','0'],
+            ['0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'],
+            ['2','2','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','2','2'],
+            ['1','1','2','2','2','2','2','2','2','2','2','2','2','2','2','2','2','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1'],
+            ['1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1']]
+
+
 
 #movement variables
 movingRight = False
@@ -32,32 +61,24 @@ test_rect = pygame.Rect(100, 100, 100, 50)
 # region Game Loop----------------------------------------------
 while True:
 	#clear the previous frame with another color
-	screen.fill((146,132,23))
+	display.fill((146,132,23))
+	
+	
+	#Render the player
+	display.blit(playerSprite,player_location)
 	
 	
 	# region Player Movement, collison, and rendering --------------
+ 
 	
-	#Render the player
-	screen.blit(playerSprite,player_location)
-
-	#Add player bounce
-	if player_location[1] > WINDOW_SIZE[1]-playerSprite.get_height():
-		playerVertMomentum = -playerVertMomentum #stop
-	else:
-		playerVertMomentum += 0.2 #gravity
+	playerVertMomentum += 0.2 #gravity
 	player_location[1] += playerVertMomentum
 	
-	# region Collision
 	#set collision player collision box location
 	playerRect.x = player_location[0]
 	playerRect.y = player_location[1]
 	
-	#Player collision with test rect
-	if playerRect.colliderect(test_rect):
-		pygame.draw.rect(screen,(255,0,0), test_rect)
-	else:
-		pygame.draw.rect(screen,(0,0,0),test_rect)
-	# endregion
+	
 	
 	# region Input
 	#move the player left and right
@@ -87,7 +108,10 @@ while True:
 	#endregion
 	# endregion --------------
 	
-	
+	surf = pygame.transform.scale(display, WINDOW_SIZE)
+	screen.blit(surf, (0,0))
+ 
+ 
 	pygame.display.update() #update the display
 	clock.tick(60) #keep 60 fps
 # endregion Game Loop --------------------------
